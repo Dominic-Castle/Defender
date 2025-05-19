@@ -1,0 +1,20 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+# ⚠️ 잠재적 위험: 스크립트에 하드코딩된 시크릿
+- script: |
+    echo "Connecting to database..."
+    export DB_PASSWORD='SuperSecret123!'  # ❌ 하드코딩된 시크릿
+    curl -X POST "https://myserver.com/deploy" -H "Authorization: Bearer $DB_PASSWORD"
+  displayName: 'Deploy with secret in script'
+
+# ⚠️ 잠재적 위험: 코드 취약성 검사 생략
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'Build without security analysis'
